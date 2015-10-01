@@ -12,32 +12,30 @@ fibonacci:
 	@ ADD/MODIFY CODE BELOW
 	@ PROLOG
 	push {r3, r4, r5, lr}
+	mov r3, #1			@Head=-1
+	mov r4, #-1		@Tail=-1
+	mov r5,#0 			@sum=0
+	cmp r0,#0 			@if (x<=0) then except
+	ble except
 
-	@ R4 = R0 - 0 (update flags)
-	@ if(R0 <= 0) goto .L3 (which returns 0)
+Loop:
+	
+	add r5,r3, r4	@sum = Head+Tail
+	mov r4, r3 		@Tail=Head
+	mov r3, r5 		@Head=sum
+	subs r0, r0,#1	@x--
+	cmp r0, #0		@while (x>=0) go repeat
+	bge Loop
 
-	@ Compare R4 wtih 1
-	@ If R4 == 1 goto .L4 (which returns 1)
-
-	@ R0 = R4 - 1
-	@ Recursive call to fibonacci with R4 - 1 as parameter
-
-	@ R5 = R0
-	@ R0 = R4 - 2
-	@ Recursive call to fibonacci with R4 - 2 as parameter
-
-	@ R0 = R5 + R0 (update flags)
-
+	mov r0, r5 		@r0=return value
 	pop {r3, r4, r5, pc}		@EPILOG
 
-	@ END CODE MODIFICATION
-.L3:
-	mov r0, #0			@ R0 = 0
-	pop {r3, r4, r5, pc}		@ EPILOG
+except:
+	mov r0,#0		@return 0
+	pop {r3, r4, r5, pc}
+     @  ddd
 
-.L4:
-	mov r0, #1			@ R0 = 1
-	pop {r3, r4, r5, pc}		@ EPILOG
+	@ END CODE MODIFICATION
 
 	.size fibonacci, .-fibonacci
 	.end
